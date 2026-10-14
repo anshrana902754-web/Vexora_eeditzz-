@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>RANA — prompt studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0906;--bg-soft:#100e0a;--surface:#171310;--surface-2:#1e1811;--line:#2b241c;--ink:#f2ece0;--ink-dim:#a89b87;--ink-faint:#6b6153;--amber:#ff7a2f;--amber-soft:#e8a35f;--amber-dim:#5c3b22;--tube:#ffb37a}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'Sora',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:999;pointer-events:none;opacity:.045;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--amber);color:#0a0906}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+.tube{position:absolute;width:3px;border-radius:3px;background:linear-gradient(180deg,transparent,var(--tube) 25%,var(--amber) 55%,transparent);filter:blur(.4px);opacity:.55}
+.tube::after{content:"";position:absolute;inset:-8px;background:inherit;filter:blur(12px);opacity:.6}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backdrop-filter:blur(14px);background:rgba(10,9,6,.72);border-bottom:1px solid var(--line)}
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;max-width:1080px;margin:0 auto}
+.logo{font-family:'Anton',sans-serif;font-size:22px;letter-spacing:.06em;display:flex;align-items:center;gap:10px}
+.logo .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 10px 2px var(--amber)}
+.handle{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink-dim);border:1px solid var(--line);padding:6px 12px;border-radius:100px}
+.hero{position:relative;padding:100px 28px 90px;text-align:center;overflow:hidden}
+.hero .tube{height:220px}
+.hero .tube.t1{left:8%;top:20px;transform:rotate(6deg)}
+.hero .tube.t2{right:12%;top:60px;transform:rotate(-8deg)}
+.hero .tube.t3{left:22%;bottom:0;height:140px;transform:rotate(-4deg);opacity:.3}
+.hero .tube.t4{right:24%;bottom:10px;height:160px;transform:rotate(5deg);opacity:.35}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.25em;text-transform:uppercase;color:var(--amber-soft);margin-bottom:22px;display:inline-flex;align-items:center;gap:10px}
+.eyebrow::before,.eyebrow::after{content:"";width:24px;height:1px;background:var(--amber-dim)}
+h1{font-family:'Anton',sans-serif;font-size:clamp(48px,9vw,96px);line-height:.95;letter-spacing:.01em;text-transform:uppercase;text-shadow:0 0 60px rgba(255,122,47,.15)}
+h1 span{color:var(--amber);text-shadow:0 0 30px rgba(255,122,47,.55),0 0 80px rgba(255,122,47,.25)}
+.hero p.sub{max-width:560px;margin:26px auto 0;color:var(--ink-dim);font-size:17px;line-height:1.6}
+.cta-row{margin-top:38px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn{font-family:'Sora',sans-serif;font-weight:600;font-size:14px;padding:14px 26px;border-radius:8px;cursor:pointer;border:1px solid transparent;transition:transform .15s ease}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{background:linear-gradient(180deg,#ff8c42,#e85f10);color:#0a0906;box-shadow:0 8px 24px rgba(255,122,47,.28)}
+.btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--amber-dim)}
+section{position:relative;padding:90px 0}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:48px;flex-wrap:wrap;gap:12px;border-bottom:1px solid var(--line);padding-bottom:22px}
+.section-head h2{font-family:'Anton',sans-serif;font-size:clamp(28px,4vw,40px);text-transform:uppercase}
+.section-head .tag{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-faint);letter-spacing:.1em}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.step{background:var(--bg-soft);padding:32px 26px}
+.step .num{font-family:'Anton',sans-serif;font-size:44px;color:transparent;-webkit-text-stroke:1.4px var(--amber-dim);line-height:1;margin-bottom:18px;display:block}
+.step h3{font-size:16px;font-weight:700;margin-bottom:10px}
+.step p{font-size:13.5px;color:var(--ink-dim);line-height:1.65}
+.step:hover .num{color:var(--amber);-webkit-text-stroke:0}
+.prompt-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:28px;overflow:hidden;position:relative}
+.prompt-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--amber),transparent);opacity:.7}
+.prompt-head{display:flex;align-items:center;justify-content:space-between;padding:22px 26px;border-bottom:1px solid var(--line);flex-wrap:wrap;gap:14px}
+.prompt-title-group{display:flex;align-items:center;gap:16px}
+.prompt-index{font-family:'Anton',sans-serif;font-size:28px;color:var(--amber);text-shadow:0 0 20px rgba(255,122,47,.4)}
+.prompt-title{font-size:17px;font-weight:700;text-transform:uppercase}
+.prompt-desc{font-size:13px;color:var(--ink-faint);margin-top:3px}
+.copy-btn{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);padding:10px 16px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s ease;white-space:nowrap}
+.copy-btn:hover{border-color:var(--amber);color:var(--amber-soft)}
+.copy-btn.copied{background:rgba(255,122,47,.12);border-color:var(--amber);color:var(--amber)}
+.copy-btn svg{width:14px;height:14px;flex-shrink:0}
+.prompt-body{padding:22px 26px 26px}
+.prompt-body pre{font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.75;color:#c9bfae;white-space:pre-wrap;word-break:break-word;max-height:260px;overflow-y:auto;padding-right:8px}
+.prompt-body pre::-webkit-scrollbar{width:6px}
+.prompt-body pre::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
+.prompt-body pre .neg{color:#8a7a63}
+.prompt-body pre .hd{color:var(--amber-soft);font-weight:600}
+.chip-row{display:flex;flex-wrap:wrap;gap:10px;margin:26px 26px 26px}
+.chip{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surface-2);border:1px solid var(--line);padding:8px 14px;border-radius:100px}
+.chip.arrow{color:var(--amber-dim);border:0;background:none;padding:8px 0}
+.chip:last-child{border-color:var(--amber-dim);color:var(--amber-soft)}
+.callout{margin-top:70px;border:1px dashed var(--amber-dim);border-radius:14px;padding:34px 30px;text-align:center;background:radial-gradient(ellipse at center,rgba(255,122,47,.06),transparent 70%)}
+.callout h3{font-family:'Anton',sans-serif;font-size:22px;text-transform:uppercase;margin-bottom:10px}
+.callout p{color:var(--ink-dim);font-size:14px;max-width:420px;margin:0 auto;line-height:1.6}
+footer{border-top:1px solid var(--line);padding:60px 0 calc(40px + env(safe-area-inset-bottom,0px));text-align:center}
+footer .logo{justify-content:center;margin-bottom:18px}
+.social-row{display:flex;gap:14px;justify-content:center;margin-bottom:26px;flex-wrap:wrap}
+.social-pill{display:flex;align-items:center;gap:9px;font-family:'JetBrains Mono',monospace;font-size:13px;padding:10px 18px;border:1px solid var(--line);border-radius:100px;transition:all .15s ease}
+.social-pill:hover{border-color:var(--amber);color:var(--amber-soft)}
+.social-pill svg{width:15px;height:15px}
+footer .fine{font-size:12px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace}
+.prompt-body textarea{width:100%;min-height:360px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.75;color:#c9bfae;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:16px 18px;resize:vertical}
+.prompt-body textarea:focus{border-color:var(--amber-dim);outline:none}
+.edit-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-faint);margin-top:10px}
+.pose-input-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.pose-input{flex:1;min-width:220px;font-family:'Sora',sans-serif;font-size:14px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.pose-input:focus{border-color:var(--amber);outline:none}
+.pose-input::placeholder{color:var(--ink-faint)}
+.pose-generate-btn{font-family:'Sora',sans-serif;font-weight:700;font-size:14px;padding:14px 28px;border-radius:10px;border:0;cursor:pointer;background:linear-gradient(180deg,#ff8c42,#e85f10);color:#0a0906;box-shadow:0 8px 24px rgba(255,122,47,.28);white-space:nowrap}
+.pose-generate-btn:disabled{opacity:.6;cursor:wait}
+.pose-empty,.pose-loading,.pose-error{font-family:'JetBrains Mono',monospace;font-size:13px;text-align:center;padding:60px 20px;border-radius:10px}
+.pose-empty{color:var(--ink-faint);border:1px dashed var(--line)}
+.pose-loading{color:var(--amber-soft);animation:pulse 1.4s ease-in-out infinite}
+.pose-error{color:#e07a5f;border:1px solid #5c2a20;background:rgba(224,122,95,.06);padding:16px 18px;text-align:left}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+.badge-ai{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--amber-soft);background:rgba(255,122,47,.1);border:1px solid var(--amber-dim);padding:4px 10px;border-radius:100px}
+@media (max-width:640px){
+.prompt-head{flex-direction:column;align-items:flex-start}
+.copy-btn{width:100%;justify-content:center}
+section{padding:64px 0}
+.hero{padding:76px 20px 60px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header><nav><div class="logo"><span class="dot"></span>RANA</div><div class="handle">@vexora_eeditzz</div></nav></header>
+
+<section class="hero">
+<div class="tube t1"></div><div class="tube t2"></div><div class="tube t3"></div><div class="tube t4"></div>
+<div class="eyebrow">Prompt Studio · Character Animation</div>
+<h1>Frame To <span>Motion</span></h1>
+<p class="sub">Three studio prompts, one animation prompt, zero guesswork. Drop in your character, pick a set, and watch them step into a fully lit scene — built for creators who post, not tinker.</p>
+<div class="cta-row">
+<button class="btn btn-primary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">Get the Prompts ↓</button>
+<button class="btn btn-ghost" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">How It Works</button>
+</div>
+</section>
+
+<section id="character-gen">
+<div class="wrap">
+<div class="section-head"><h2>Character Generation</h2><span class="tag">01 TEMPLATE · FULLY EDITABLE</span></div>
+<div class="prompt-card">
+<div class="prompt-head">
+<div class="prompt-title-group"><span class="prompt-index">00</span><div><div class="prompt-title">Master Character Builder</div><div class="prompt-desc">Fill the brackets below, then copy — works from a single reference image</div></div></div>
+<button class="copy-btn" data-target="charGenBox" data-type="textarea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Prompt</button>
+</div>
+<div class="prompt-body">
+<textarea id="charGenBox" spellcheck="false">Create a full-body anime character in Makoto Shinkai-inspired cinematic style with a dreamy, soft, highly detailed, emotionally expressive aesthetic. The character should maintain the same facial structure, hairstyle, clothing silhouette, proportions, and overall visual identity as the provided reference image while adapting all customizable attributes below. Preserve character consistency, premium anime rendering, and polished illustration quality.
+
+Character Details
+- Gender: [Male / Female / Androgynous]
+- Age Appearance: [Teen / Young Adult / Adult]
+- Height: [Short / Average / Tall]
+- Body Type: [Slim / Skinny / Chubby / Athletic / Aesthetic Lean Physique / Muscular]
+- Face Shape: [Oval / Round / Heart / Square / Sharp Jawline]
+- Jawline: [Soft / Defined / Sharp]
+- Cheek Structure: [Soft / Defined]
+- Chin Shape: [Rounded / Pointed]
+- Skin Tone: [Fair / Light Beige / Wheatish / Tan / Brown / Dark]
+- Skin Texture: [Smooth / Natural / Freckled]
+- Eye Colour: [Black / Dark Brown / Brown / Hazel / Blue / Green / Grey]
+- Eye Shape: [Large Anime Eyes / Almond / Sharp / Soft / Round]
+- Eyelashes: [Short / Medium / Long]
+- Eyebrows: [Thin / Thick / Straight / Curved]
+- Nose Style: [Small / Straight / Defined]
+- Lip Style: [Thin / Natural / Soft]
+- Expression: [Happy / Calm / Serious / Confident / Smiling / Angry / Sad / Playful]
+
+Hair Details
+- Hair Colour: [Black / Brown / Blonde / White / Silver / Red / Blue / Pink / Custom]
+- Hair Style: [Messy Layered / Wolf Cut / Curtain Hair / Straight / Wavy / Curly / Spiky / Ponytail / Bun / Long Flowing]
+- Hair Length: [Short / Medium / Long]
+- Hair Volume: [Low / Medium / High]
+- Hair Texture: [Silky / Soft / Fluffy / Messy / Wavy]
+- Bangs: [Yes / No / Side Bangs / Curtain Bangs]
+- Hair Shine: [Matte / Natural / Glossy]
+
+Clothing
+- Outfit Style: [Casual / Streetwear / School Uniform / Formal / Fantasy / Techwear / Traditional / Modern]
+- Top: [T-shirt / Hoodie / Jacket / Shirt / Sweater / Custom]
+- Inner Layer: [None / Long Sleeve / Tank Top / Shirt]
+- Bottom: [Jeans / Cargo Pants / Shorts / Joggers / Skirt]
+- Footwear: [Sneakers / Boots / Loafers / Sandals]
+- Clothing Fit: [Oversized / Relaxed / Slim Fit / Regular Fit]
+- Primary Clothing Colour: [Color]
+- Secondary Clothing Colour: [Color]
+- Clothing Pattern: [Plain / Graphic / Striped / Checkered / Printed]
+
+Accessories
+- Necklace: [None / Chain / Cross / Pendant]
+- Earrings: [None / Stud / Hoop]
+- Rings: [None / Silver / Gold]
+- Bracelet: [None / Leather / Metal]
+- Watch: [None / Digital / Analog]
+- Glasses: [None / Round / Square]
+- Head Accessories: [Cap / Beanie / Headphones / None]
+- Bag: [Crossbody / Backpack / Sling Bag / None]
+
+Pose
+- Pose: [Standing / Peace Sign / Pointing / Hands in Pocket / Walking / Sitting / Running]
+- Hand Gesture: [Peace Sign / Thumbs Up / Open Palm / Finger Heart / None]
+- Camera Angle: [Front / Three Quarter / Side / Low Angle / High Angle]
+- Framing: [Portrait / Half Body / Full Body / Close Up]
+- Head Direction: [Looking at Camera / Looking Away / Looking Down / Looking Up]
+
+Environment
+- Background: [Solid Colour / Sky / Sunset / City / Classroom / Forest / Bedroom / Minimal]
+
+Art Style
+- Makoto Shinkai-inspired anime illustration
+- Highly detailed digital painting
+- Soft cinematic lighting
+- Beautiful color harmony
+- Dreamlike atmosphere
+- Smooth gradients
+- Rich environmental lighting
+- Clean line art
+- Elegant anime rendering
+- Vibrant yet natural colours
+- High-quality illustration
+- Premium anime artwork
+- Professional composition
+- Consistent character design
+- Expressive facial features
+- Sharp focus
+- Ultra HD
+- 8K quality
+
+Quality Tags
+- Masterpiece
+- Best Quality
+- Ultra Detailed
+- High Resolution
+- Professional Anime Illustration
+- Perfect Anatomy
+- Clean Linework
+- Beautiful Lighting
+- Sharp Details
+- Cinematic Composition
+
+Negative Prompt
+- Low quality
+- Blurry
+- Pixelated
+- Bad anatomy
+- Extra fingers
+- Missing fingers
+- Extra limbs
+- Cropped body
+- Deformed face
+- Uneven eyes
+- Wrong proportions
+- Distorted hands
+- Mutated anatomy
+- Duplicate body parts
+- Bad shading
+- Oversaturated colours
+- Watermark
+- Logo
+- Text
+- Signature
+- Noise
+- Artifacts
+- Out of frame
+- Low resolution
+- Realistic photo style
+- 3D render
+- CGI
+- Plastic skin</textarea>
+<div class="edit-hint">✎ Editable — swap the brackets for your picks, then hit copy</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="how" style="padding-top:60px">
+<div class="wrap">
+<div class="section-head"><h2>Process</h2><span class="tag">04 STEPS · START TO SCREEN</span></div>
+<div class="steps">
+<div class="step"><span class="num">01</span><h3>Pick a Studio</h3><p>Every character needs a set before it needs motion. Choose from three built studios below — cinematic podcast desk, warm interview lounge, or a cozy night-in corner.</p></div>
+<div class="step"><span class="num">02</span><h3>Add Your Character</h3><p>Upload your character's reference image into the generator alongside the chosen prompt. This locks the identity — same face, same fit, same energy — before anything else is drawn.</p></div>
+<div class="step"><span class="num">03</span><h3>Generate the Scene</h3><p>Paste the prompt, hit generate, and let the studio build itself around your character — lighting, depth, and mood, fully rendered and ready to pick from.</p></div>
+<div class="step"><span class="num">04</span><h3>Bring It to Life</h3><p>Tap your favorite frame → Animate → set 16:9, ×1, 10 sec, Omni Flash → Generate. That's it. Static becomes footage.</p></div>
+</div>
+</div>
+</section>
+
+<section id="prompts">
+<div class="wrap">
+<div class="section-head"><h2>Studio Prompts</h2><span class="tag">03 SETS · IMAGE GENERATION</span></div>
+
+<div class="prompt-card">
+<div class="prompt-head"><div class="prompt-title-group"><span class="prompt-index">01</span><div><div class="prompt-title">Dark Cinematic Podcast Studio</div><div class="prompt-desc">Walnut desk · warm orange practicals · broadcast mic</div></div></div>
+<button class="copy-btn" data-target="p1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Prompt</button></div>
+<div class="prompt-body"><pre id="p1"><span class="hd">========================
+UNIVERSAL CHARACTER LOCK
+========================</span>
+
+Use the uploaded reference images ONLY as the identity reference.
+
+The generated character MUST remain the exact same original anime character in every image.
+
+STYLE PRIORITY:
+Makoto Shinkai-inspired anime illustration.
+NOT a real person.
+NOT live action.
+NOT photorealistic.
+
+Preserve the exact hairstyle, face shape, expressive anime eyes, eyebrows, mouth, jawline, skin tone, proportions, clothing, accessories and personality from the reference images.
+
+Never redesign the character.
+Never change the hairstyle.
+Never change clothing.
+Never change accessories.
+Never change facial structure.
+
+The character should look like the same protagonist appearing throughout a Makoto Shinkai anime film.
+
+Art Style:
+Makoto Shinkai anime
+beautiful painterly background
+clean anime lineart
+soft cel shading
+delicate gradients
+cinematic lighting
+volumetric light
+soft bloom
+feature-film anime quality
+high-detail digital illustration
+vibrant but natural colors
+beautiful atmospheric depth
+
+The environment may be realistic,
+but the character MUST remain anime.
+
+<span class="hd">========================
+SCENE
+========================</span>
+
+Dark premium creator podcast studio.
+
+Character seated behind a luxurious walnut wooden desk.
+
+Camera at eye level.
+
+Waist-up framing.
+
+Character slightly leaning forward.
+
+Shoulders relaxed.
+
+Both hands raised naturally while explaining something.
+
+Natural finger placement.
+
+Confident but friendly expression.
+
+Large broadcast microphone centered in front of the character.
+
+Professional boom arm entering diagonally from the left.
+
+Warm cinematic orange practical lights.
+
+Dark matte walls.
+
+Vertical light tubes glowing softly.
+
+Framed artwork.
+
+Premium shelves.
+
+Soft background bokeh.
+
+Luxury creator aesthetic.
+
+Strong foreground depth.
+
+Beautiful atmospheric shadows.
+
+Professional YouTube creator studio.
+
+Ultra clean composition.
+
+Anime movie quality.
+
+<span class="hd">========================
+NEGATIVE PROMPT
+========================</span>
+
+<span class="neg">photorealistic, real human, DSLR, live action, CGI, 3D, realistic skin, skin pores, western cartoon, Pixar, comic, bad hands, extra fingers, deformed fingers, different hairstyle, different clothes, different face, watermark, logo, text, blurry</span></pre></div>
+</div>
+
+<div class="prompt-card">
+<div class="prompt-head"><div class="prompt-title-group"><span class="prompt-index">02</span><div><div class="prompt-title">Modern Interview Studio</div><div class="prompt-desc">Scandinavian lounge · window light · calm and warm</div></div></div>
+<button class="copy-btn" data-target="p2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Prompt</button></div>
+<div class="prompt-body"><pre id="p2"><span class="hd">========================
+UNIVERSAL CHARACTER LOCK
+========================</span>
+
+Use the uploaded reference images ONLY as the identity reference.
+
+The generated character MUST remain the exact same original anime character in every image.
+
+STYLE PRIORITY:
+Makoto Shinkai-inspired anime illustration.
+NOT photorealistic.
+NOT live action.
+
+Preserve identical face, hairstyle, eyes, clothing, accessories, body proportions and personality.
+
+Maintain complete consistency across every image.
+
+Beautiful hand-painted anime illustration.
+
+<span class="hd">========================
+SCENE
+========================</span>
+
+Modern warm creator interview studio.
+
+Character sitting comfortably inside a soft fabric chair.
+
+One leg crossed over the other.
+
+Body rotated about fifteen degrees toward camera.
+
+Hands lifted naturally while talking.
+
+Friendly smile.
+
+Warm inviting expression.
+
+Small wooden coffee table.
+
+Coffee mug.
+
+Minimal Scandinavian interior.
+
+Indoor plants.
+
+Wooden shelves.
+
+Books.
+
+Soft lamp.
+
+Framed artwork.
+
+Warm cream walls.
+
+Natural window light mixed with warm practical lamps.
+
+Calm premium atmosphere.
+
+Beautiful creamy depth of field.
+
+Makoto Shinkai movie lighting.
+
+Elegant composition.
+
+Premium creator setup.
+
+Ultra detailed anime illustration.
+
+<span class="hd">========================
+NEGATIVE PROMPT
+========================</span>
+
+<span class="neg">photorealistic, DSLR, realistic person, skin pores, CGI, Pixar, western cartoon, realistic anatomy, extra fingers, ugly hands, text, logo, watermark</span></pre></div>
+</div>
+
+<div class="prompt-card">
+<div class="prompt-head"><div class="prompt-title-group"><span class="prompt-index">03</span><div><div class="prompt-title">Cozy Night Creator Room</div><div class="prompt-desc">Rug &amp; lamp light · hoodie · glowing laptop backdrop</div></div></div>
+<button class="copy-btn" data-target="p3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Prompt</button></div>
+<div class="prompt-body"><pre id="p3"><span class="hd">========================
+UNIVERSAL CHARACTER LOCK
+========================</span>
+
+Use the uploaded reference images ONLY as identity reference.
+
+Makoto Shinkai anime.
+
+Never become realistic.
+
+Never become live action.
+
+Keep exactly the same character throughout.
+
+<span class="hd">========================
+SCENE
+========================</span>
+
+Warm cozy late-night creator room.
+
+Slightly top-down camera angle.
+
+Character sitting comfortably on a soft rug.
+
+One hand holding a warm coffee mug.
+
+Other hand explaining naturally.
+
+Soft smile.
+
+Relaxed expression.
+
+Comfortable hoodie.
+
+Warm table lamp.
+
+Comfortable sofa.
+
+Open glowing laptop in background.
+
+Small wooden side table.
+
+Books.
+
+Plants.
+
+Warm ambient practical lights.
+
+Orange cinematic glow.
+
+Subtle film grain feeling.
+
+Soft atmospheric lighting.
+
+Beautiful anime room.
+
+Peaceful evening vibe.
+
+Feature-film Makoto Shinkai artwork.
+
+Highly detailed environment.
+
+<span class="hd">========================
+NEGATIVE PROMPT
+========================</span>
+
+<span class="neg">photorealistic, live action, DSLR, CGI, realistic skin, bad anatomy, bad hands, extra fingers, text, logo, watermark</span></pre></div>
+</div>
+</div>
+</section>
+
+<section id="animate">
+<div class="wrap">
+<div class="section-head"><h2>Animation Prompt</h2><span class="tag">OMNI FLASH · VIDEO GENERATION</span></div>
+<div class="prompt-card">
+<div class="prompt-head"><div class="prompt-title-group"><span class="prompt-index">04</span><div><div class="prompt-title">Podcast Talking Motion — Omni Flash</div><div class="prompt-desc">Natural lip sync · idle motion · presenter energy</div></div></div>
+<button class="copy-btn" data-target="p4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Prompt</button></div>
+<div class="prompt-body"><pre id="p4">Natural conversation animation, realistic lip synchronization, subtle eyebrow movement, natural blinking every few seconds, small head tilts, slight shoulder movement, breathing motion, occasional hand gestures, engaging presenter energy, speaking directly to audience, smooth motion without exaggerated movements.
+
+Medium shot, eye-level camera angle, character centered, cinematic depth of field, gentle camera drift, professional podcast framing, stable composition, smooth motion.
+
+Use the uploaded character reference images as the ONLY identity reference.
+
+The character MUST remain a 2D anime illustration in the exact visual language of Makoto Shinkai-inspired anime. Never convert the character into a real human or live-action person.
+
+Preserve the exact anime face shape, expressive anime eyes, stylized nose and mouth, anime hair strands, clean line art, cel shading with soft painterly gradients, and hand-drawn illustration aesthetics. Maintain the same proportions, clothing, accessories, hairstyle, and personality as the reference.
+
+This is an original anime character. Keep the illustration style completely consistent across every generation. Do not increase realism. Do not introduce photographic skin texture, pores, realistic facial anatomy, or live-action features.
+
+The environment may be cinematic, but the character must always remain a beautifully illustrated anime character.</pre></div>
+<div class="chip-row">
+<span class="chip">Tap Favorite Image</span><span class="chip arrow">→</span><span class="chip">Animate</span><span class="chip arrow">→</span><span class="chip">16:9</span><span class="chip arrow">→</span><span class="chip">×1</span><span class="chip arrow">→</span><span class="chip">10 sec</span><span class="chip arrow">→</span><span class="chip">Omni Flash</span><span class="chip arrow">→</span><span class="chip">Generate</span>
+</div>
+</div>
+<div class="callout"><h3>That's a Wrap</h3><p>The full prompt sheet — plus anything new I'm testing — always lives in my recent highlight. Save this page, keep that highlight bookmarked. Byeeeeeeeeeeeeee!</p></div>
+</div>
+</section>
+
+<section id="pose-generator">
+<div class="wrap">
+<div class="section-head"><h2>Master Poses Generator</h2><span class="badge-ai">⚡ AI-Generated · Live</span></div>
+<p style="color:var(--ink-dim);font-size:14px;max-width:560px;margin-bottom:28px;line-height:1.6">Type a pose idea, or leave it blank for a surprise. Either way you get a fully detailed, exaggerated, camera-ready pose prompt — built to work on any character, any outfit, any face.</p>
+<div class="pose-input-row">
+<input type="text" id="poseInput" class="pose-input" placeholder="e.g. jumping mid-air with jacket flaring — or leave blank for a random iconic pose">
+<button id="poseGenerateBtn" class="pose-generate-btn" onclick="generatePose()">✨ Generate Pose Prompt</button>
+</div>
+<div class="prompt-card">
+<div class="prompt-head"><div class="prompt-title-group"><span class="prompt-index">05</span><div><div class="prompt-title">Master Pose Prompt</div><div class="prompt-desc">Universal · works on any character regardless of face or outfit</div></div></div>
+<button class="copy-btn" data-target="poseOutputBox" data-type="textarea" id="poseCopyBtn" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Prompt</button></div>
+<div class="prompt-body"><div class="pose-output-wrap" id="poseOutputWrap"><div class="pose-empty">No pose generated yet — describe one above (or leave it blank) and tap Generate.</div></div></div>
+</div>
+</div>
+</section>
+
+<footer>
+<div class="logo"><span class="dot"></span>RANA</div>
+<div class="social-row">
+<a class="social-pill" href="https://www.instagram.com/vexora_eeditzz" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Instagram</a>
+<a class="social-pill" href="https://youtube.com/@zeix_yt?si=9VjW8Pi94n3aDJyZ" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 8.5s-.2-1.6-.8-2.3c-.8-.9-1.7-.9-2.1-1C16.2 5 12 5 12 5s-4.2 0-7.1.2c-.4.1-1.3.1-2.1 1C2.2 6.9 2 8.5 2 8.5S1.8 10.4 1.8 12.3v1.8c0 1.9.2 3.8.2 3.8s.2 1.6.8 2.3c.8.9 1.9.9 2.4 1 1.7.2 7.3.2 7.3.2s4.2 0 7.1-.2c.4-.1 1.3-.1 2.1-1 .6-.7.8-2.3.8-2.3s.2-1.9.2-3.8v-1.8c0-1.9-.2-3.8-.2-3.8z"/><path d="M9.8 15.3V9.4l5.4 2.9-5.4 3z" fill="currentColor" stroke="none"/></svg>YouTube</a>
+</div>
+<div class="fine">rana · prompts for creators who animate · built for consistency, not luck</div>
+</footer>
+
+<script>
+document.querySelectorAll('.copy-btn').forEach(btn=>{
+btn.addEventListener('click',async()=>{
+const el=document.getElementById(btn.getAttribute('data-target'));
+if(!el)return;
+const text=btn.getAttribute('data-type')==='textarea'?el.value:el.innerText;
+try{await navigator.clipboard.writeText(text)}catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(_){}document.body.removeChild(ta)}
+const original=btn.innerHTML;
+btn.classList.add('copied');
+btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied';
+setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML=original},1800);
+});
+});
+
+const SYS="You write single, extremely detailed anime character pose prompts for AI image generators (Makoto Shinkai-inspired illustration style). Every prompt must be completely UNIVERSAL — never reference a specific face, hairstyle, outfit, gender, or character identity, so it can be dropped onto any character reference image unchanged. Cover: full body composition and framing, camera angle and lens feel, exact limb and hand placement, weight distribution and balance, spinal and shoulder line, fabric and hair motion implied by the pose, and an energetic, DYNAMIC, slightly EXAGGERATED sense of motion and drama that reads as bold and eye-catching in a thumbnail — hero-shot energy, not a stiff standing photo. Push expressions and gestures to be visually striking. MANDATORY for every prompt: the background must be a plain solid white background with no scenery, props, gradient, vignette, or texture, and the lighting must be completely flat, even, shadowless studio lighting with no cinematic, volumetric, rim or colored light and no dramatic shadows on the character. Always state 'solid white background' and 'flat even studio lighting, no dramatic shadows' near the end. Output ONLY the finished prompt as plain text — no markdown, no headers, no preamble, no quotation marks.";
+
+async function generatePose(){
+const btn=document.getElementById('poseGenerateBtn'),copyBtn=document.getElementById('poseCopyBtn'),wrap=document.getElementById('poseOutputWrap');
+const idea=document.getElementById('poseInput').value.trim();
+btn.disabled=true;btn.textContent='✨ Generating…';copyBtn.style.display='none';
+wrap.innerHTML='<div class="pose-loading">Building a master pose prompt…</div>';
+const msg=idea?`Write one master pose prompt based on this idea: ${idea}`:"Invent one bold, iconic, highly dynamic anime pose from scratch and write the master pose prompt for it.";
+try{
+const sample=await claude.use("sample");
+if(!sample)throw new Error("unavailable");
+const r=await sample(SYS+"\n\n"+msg,{cache:false});
+const result=(r.text||"").trim();
+if(!result)throw new Error("empty");
+const locked=result+"\n\nBackground: solid plain white background, absolutely no scenery, props, gradient, or texture. Lighting: completely flat, even, shadowless studio lighting — no cinematic lighting, no volumetric light, no rim light, no colored light, no dramatic shadows.";
+wrap.innerHTML='<textarea id="poseOutputBox" spellcheck="false" style="min-height:280px"></textarea><div class="edit-hint">✎ Editable — tweak it, then copy</div>';
+document.getElementById('poseOutputBox').value=locked;
+copyBtn.style.display='flex';
+}catch(err){
+wrap.innerHTML='<div class="pose-error">Couldn\'t generate a pose right now — check your connection and try again.</div>';
+}finally{btn.disabled=false;btn.textContent='✨ Generate Pose Prompt'}
+}
+</script>
+</body>
+</html>
